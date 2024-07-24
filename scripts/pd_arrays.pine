@@ -12,14 +12,14 @@ var label[] stLow = array.new<label>()
 var label[] itLow = array.new<label>()
 var label[] ltLow = array.new<label>()
 
-var lineTrand = array.new_line()
+var lineTrend = array.new_line()
 //_showMedtod = input.bool(true, title = "show Medtod", inline = "0", group="Medtod")
-_Last_BoS = input.bool(true, title = "show only: ", inline = "1", group="Trand / BOS")
-_col_bos = input.int(5,title = "", minval=0, maxval=50, step=1, inline = "1", group="Trand / BOS")
-_BoSColorbl = input.color(color.green, title = "Long", inline = "2", group="Trand / BOS")
-_BoSStylebl = input.string ("Solid", "", options=["Solid", "Dashed", "Dotted"], inline = "2", group="Trand / BOS")
-_BoSColorbr = input.color(color.red, title = "Short", inline = "3", group="Trand / BOS")
-_BoSStylebr = input.string ("Solid", "", options=["Solid", "Dashed", "Dotted"], inline = "3", group="Trand / BOS")
+_Last_BoS = input.bool(true, title = "show only: ", inline = "1", group="Trend / BOS")
+_col_bos = input.int(5,title = "", minval=0, maxval=50, step=1, inline = "1", group="Trend / BOS")
+_BoSColorbl = input.color(color.green, title = "Long", inline = "2", group="Trend / BOS")
+_BoSStylebl = input.string ("Solid", "", options=["Solid", "Dashed", "Dotted"], inline = "2", group="Trend / BOS")
+_BoSColorbr = input.color(color.red, title = "Short", inline = "3", group="Trend / BOS")
+_BoSStylebr = input.string ("Solid", "", options=["Solid", "Dashed", "Dotted"], inline = "3", group="Trend / BOS")
 
 _BoSStyleblS                  = _BoSStylebl=="Solid" ? line.style_solid : _BoSStylebl == "Dotted" ? line.style_dotted : line.style_dashed
 _BoSStylebrS                  = _BoSStylebr=="Solid" ? line.style_solid : _BoSStylebr == "Dotted" ? line.style_dotted : line.style_dashed
@@ -65,15 +65,17 @@ if stHigh.size() > 1 and stLow.size() > 1
         trendcolor := color.green
         array.push(posline,ph)
         array.push(poslineend,bar_index)
-        array.push(lineTrand, line.new(ph,hh,bar_index,hh,xloc.bar_index,extend.none,_BoSColorbl,_BoSStyleblS,1))
+        array.push(lineTrend, line.new(ph,hh,bar_index,hh,xloc.bar_index,extend.none,_BoSColorbl,_BoSStyleblS,1))
+        alert("Trend changed to bull", alert.freq_once_per_bar)
     if close[1] < ll and array.get(posline,0) != pl and pl != eqlh
         trend := "bear"
         trendcolor := color.red
         array.push(posline,pl)
         array.push(poslineend,bar_index)
-        array.push(lineTrand, line.new(pl,ll,bar_index,ll,xloc.bar_index,extend.none,_BoSColorbr,line.style_solid,1))
-    if array.size(lineTrand) > _col_bos and _Last_BoS
-        ln = array.shift(lineTrand)
+        array.push(lineTrend, line.new(pl,ll,bar_index,ll,xloc.bar_index,extend.none,_BoSColorbr,line.style_solid,1))
+        alert("Trend changed to bear", alert.freq_once_per_bar)
+    if array.size(lineTrend) > _col_bos and _Last_BoS
+        ln = array.shift(lineTrend)
         line.delete(ln)
     if array.size(posline) > 1
         array.shift(posline)
@@ -135,6 +137,7 @@ if stHigh.size() > 1 and stLow.size() > 1
                 break
         array.push(posboxOB,array.get(posline,0))
         array.push(OrderBlock, box.new(indOB, OBtl, FFBullob, OBbl, xloc = xloc.bar_index,border_width = bord, bgcolor = bgOB, text = bgtext, text_halign = text.align_right, text_valign = text.align_center, text_wrap = text.wrap_none, text_size = size.small, text_color = color.rgb(0,0,0,70)))
+        alert("Order block created", alert.freq_once_per_bar)
         if array.size(OrderBlock) >= 2
             if box.get_left(array.get(OrderBlock, array.size(OrderBlock)-2)) == box.get_left(array.get(OrderBlock, array.size(OrderBlock)-1))
                 box.delete(array.get(OrderBlock,array.size(OrderBlock)-2))
