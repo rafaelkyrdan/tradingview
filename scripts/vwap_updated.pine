@@ -3,7 +3,7 @@ indicator(title="Volume Weighted Average Price", shorttitle="VWAP", overlay=true
 
 hideonDWM = input(false, title="Hide VWAP on 1D or Above", group="VWAP Settings", display = display.none)
 var anchor = input.string(defval = "Session", title="Anchor Period",
- options=["Session", "Session LO", "Session NY", "Week", "Month", "Quarter", "Year", "Decade", "Century", "Earnings", "Dividends", "Splits"], group="VWAP Settings")
+ options=["Session", "Session LO", "Session NY", "Session Lunch", "Session PM", "Week", "Month", "Quarter", "Year", "Decade", "Century", "Earnings", "Dividends", "Splits"], group="VWAP Settings")
 src = input(title = "Source", defval = hlc3, group="VWAP Settings", display = display.none)
 offset = input.int(0, title="Offset", group="VWAP Settings", display = display.none)
 
@@ -34,6 +34,18 @@ isSessionNY() =>
     prevTime = hour(time[1], "America/New_York") * 100 + minute(time[1], "America/New_York")
     currentTime >= 730 and prevTime < 730
 
+isSessionLunch() =>
+    // Session Lunch starts at 12:00 PM NY time (1200 in 24h format)
+    currentTime = hour(time, "America/New_York") * 100 + minute(time, "America/New_York")
+    prevTime = hour(time[1], "America/New_York") * 100 + minute(time[1], "America/New_York")
+    currentTime >= 1200 and prevTime < 1200
+
+isSessionPM() =>
+    // Session PM starts at 01:30 PM NY time (1330 in 24h format)
+    currentTime = hour(time, "America/New_York") * 100 + minute(time, "America/New_York")
+    prevTime = hour(time[1], "America/New_York") * 100 + minute(time[1], "America/New_York")
+    currentTime >= 1330 and prevTime < 1330
+
 isNewPeriod = switch anchor
     "Earnings" => 
         new_earnings_actual = request.earnings(syminfo.tickerid, earnings.actual, barmerge.gaps_on, barmerge.lookahead_on, ignore_invalid_symbol=true)
@@ -48,6 +60,8 @@ isNewPeriod = switch anchor
     "Session"   => timeframe.change("D")
     "Session LO" => isSessionLO()
     "Session NY" => isSessionNY()
+    "Session Lunch" => isSessionLunch()
+    "Session PM" => isSessionPM()
     "Week"      => timeframe.change("W")
     "Month"     => timeframe.change("M")
     "Quarter"   => timeframe.change("3M")
