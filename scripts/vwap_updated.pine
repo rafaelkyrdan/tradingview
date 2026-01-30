@@ -35,10 +35,10 @@ isSessionNY() =>
     currentTime >= 730 and prevTime < 730
 
 isSessionLunch() =>
-    // Session Lunch starts at 12:00 PM NY time (1200 in 24h format)
+    // Session Lunch starts at 11:30 AM NY time (1130 in 24h format)
     currentTime = hour(time, "America/New_York") * 100 + minute(time, "America/New_York")
     prevTime = hour(time[1], "America/New_York") * 100 + minute(time[1], "America/New_York")
-    currentTime >= 1200 and prevTime < 1200
+    currentTime >= 1130 and prevTime < 1130
 
 isSessionPM() =>
     // Session PM starts at 01:30 PM NY time (1330 in 24h format)
