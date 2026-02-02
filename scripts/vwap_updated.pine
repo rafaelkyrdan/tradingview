@@ -23,22 +23,22 @@ if barstate.islast and cumVolume == 0
 
 // Custom session detection functions
 isSessionLO() =>
-    // Session LO starts at 01:30 AM NY time (0130 in 24h format)
+    // Session LO (London) starts at 01:00 AM NY time (0100 in 24h format)
     currentTime = hour(time, "America/New_York") * 100 + minute(time, "America/New_York")
     prevTime = hour(time[1], "America/New_York") * 100 + minute(time[1], "America/New_York")
-    currentTime >= 130 and prevTime < 130
+    currentTime >= 100 and prevTime < 100
 
 isSessionNY() =>
-    // Session NY starts at 07:30 AM NY time (0730 in 24h format)
+    // Session NY AM starts at 07:00 AM NY time (0700 in 24h format)
     currentTime = hour(time, "America/New_York") * 100 + minute(time, "America/New_York")
     prevTime = hour(time[1], "America/New_York") * 100 + minute(time[1], "America/New_York")
-    currentTime >= 730 and prevTime < 730
+    currentTime >= 700 and prevTime < 700
 
 isSessionLunch() =>
-    // Session Lunch starts at 11:30 AM NY time (1130 in 24h format)
+    // Session Lunch starts at 12:00 PM NY time (1200 in 24h format)
     currentTime = hour(time, "America/New_York") * 100 + minute(time, "America/New_York")
     prevTime = hour(time[1], "America/New_York") * 100 + minute(time[1], "America/New_York")
-    currentTime >= 1130 and prevTime < 1130
+    currentTime >= 1200 and prevTime < 1200
 
 isSessionPM() =>
     // Session PM starts at 01:30 PM NY time (1330 in 24h format)
@@ -47,14 +47,14 @@ isSessionPM() =>
     currentTime >= 1330 and prevTime < 1330
 
 isNewPeriod = switch anchor
-    "Earnings" => 
+    "Earnings" =>
         new_earnings_actual = request.earnings(syminfo.tickerid, earnings.actual, barmerge.gaps_on, barmerge.lookahead_on, ignore_invalid_symbol=true)
         new_earnings_standardized = request.earnings(syminfo.tickerid, earnings.standardized, barmerge.gaps_on, barmerge.lookahead_on, ignore_invalid_symbol=true)
         not na(new_earnings_actual) or not na(new_earnings_standardized)
-    "Dividends" => 
+    "Dividends" =>
         new_dividends = request.dividends(syminfo.tickerid, dividends.gross, barmerge.gaps_on, barmerge.lookahead_on, ignore_invalid_symbol=true)
         not na(new_dividends)
-    "Splits"    => 
+    "Splits"    =>
         new_split = request.splits(syminfo.tickerid, splits.denominator, barmerge.gaps_on, barmerge.lookahead_on, ignore_invalid_symbol=true)
         not na(new_split)
     "Session"   => timeframe.change("D")
